@@ -1,5 +1,6 @@
 from openai import OpenAI
 from disease_tracker.models import Disease
+from disease_tracker.models import DiseaseAnalysis
 import environ
 from django.conf import settings
 
@@ -13,36 +14,57 @@ class DiseaseAnalyzer:
         self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
     def get_disease_analysis(self, disease_title):
-        """Get detailed analysis for a specific disease"""
-        prompt = f"""
-        Analyze this disease: {disease_title}
-        
-        Provide a comprehensive analysis in the following format:
-        
-        1. Disease Overview:
-           - Brief description
-           - Common symptoms
-           - Typical incubation period
-           - Transmission methods
-        
-        2. Risk Assessment:
-           - Severity level
-           - Most vulnerable populations
-           - Environmental factors affecting spread
-        
-        3. Prevention Guidelines:
-           - Personal protection measures
-           - Community-level precautions
-           - Vaccination information (if applicable)
-        
-        4. Treatment Approach:
-           - First response steps
-           - When to seek medical attention
-           - Common treatment methods
-        
-        Present the information in a clear, factual manner suitable for public health awareness.
-        """
-        return self._get_completion(prompt)
+        try:
+            # First, get the Disease object
+            disease = Disease.objects.get(title=disease_title)
+            
+            # Check if analysis exists for this disease
+            analysis = DiseaseAnalysis.objects.filter(disease_title=disease).first()
+            if analysis:
+                print("Found cached analysis")
+                return analysis.analysis
+            
+            """Get detailed analysis for a specific disease"""
+            prompt = f"""
+            Analyze this disease: {disease_title}
+            
+            Provide a comprehensive analysis in the following format:
+            
+            1. Disease Overview:
+            - Brief description
+            - Common symptoms
+            - Typical incubation period
+            - Transmission methods
+            
+            2. Risk Assessment:
+            - Severity level
+            - Most vulnerable populations
+            - Environmental factors affecting spread
+            
+            3. Prevention Guidelines:
+            - Personal protection measures
+            - Community-level precautions
+            - Vaccination information (if applicable)
+            
+            4. Treatment Approach:
+            - First response steps
+            - When to seek medical attention
+            - Common treatment methods
+            
+            Present the information in a clear, factual manner suitable for public health awareness.
+            """
+            llm_response = self._get_completion(prompt)
+
+            # Create new analysis with the Disease object
+            new_analysis = DiseaseAnalysis.objects.create(
+                disease_title=disease,  # Pass the Disease object, not the string
+                analysis=llm_response
+            )
+            return new_analysis.analysis
+
+        except Disease.DoesNotExist:
+            print(f"Disease not found: {disease_title}")
+            return None
 
     def analyze_regional_impact(self, region):
         """Analyze disease impact for a specific region"""

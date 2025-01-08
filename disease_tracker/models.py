@@ -9,3 +9,11 @@ class Disease(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.location}"
+
+class DiseaseAnalysis(models.Model):
+    disease_title = models.ForeignKey(Disease, on_delete=models.CASCADE)
+    analysis = models.TextField() 
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Analysis for {self.disease_title.title} - {self.last_updated}"

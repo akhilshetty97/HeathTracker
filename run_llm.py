@@ -10,5 +10,5 @@ from disease_tracker.services.llm_service import DiseaseAnalyzer
 
 # Use DiseaseAnalyzer
 analyzer = DiseaseAnalyzer()
-result = analyzer.get_global_health_assessment()
+result = analyzer.get_disease_analysis("Cucumbers - Salmonella Outbreak")
 print(result)
