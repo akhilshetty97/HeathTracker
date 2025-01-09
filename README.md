@@ -1,4 +1,4 @@
-# Disease Outbreak Monitor - Real-time Disease Surveillance Platform
+# Disease Outbreak Monitor - Automated Web Scraping and Health Risk Analysis System
 
 A sophisticated web application that automatically tracks and analyzes global disease outbreaks using data from CDC and WHO. The system employs web scraping, RESTful APIs, and AI-powered analysis to provide real-time health risk assessments.
 
