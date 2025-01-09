@@ -32,7 +32,6 @@ A sophisticated web application that automatically tracks and analyzes global di
 - **Frontend**: React
 - **AI Integration**: GPT-4
 - **Web Scraping**: Selenium
-- **Additional Tools**: Redis (caching)
 
 ## API Endpoints
 
